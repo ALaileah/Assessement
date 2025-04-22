@@ -1,13 +1,14 @@
-# Example-CRUD-React-18-Laravel-11
-- The example shows how to Building a React CRUD App with a Laravel API and using MySQL as a database.
-- The article of this repository https://blog.stackpuz.com/building-a-react-crud-app-with-a-laravel-api
-- To find more resources, please visit https://stackpuz.com
+# CRUD React App with Laravel Api and Dotnet for Authentication
+- The example shows how to Building a React CRUD App with a Laravel API and using MySQL as a database, and Dotnet for authentication.
 
 ## Prerequisites
 - Node.js
 - Composer
 - PHP 8.2
+- dotnet
 - MySQL
+- Sql Server
+
 
 ## Installation
 - Clone this repository `git clone https://github.com/stackpuz/Example-CRUD-React-18-Laravel-11 .`
@@ -17,9 +18,14 @@
 - Install the Laravel dependencies. `composer install`
 - Create a new database and run [/database.sql](/database.sql) script to create tables and import data.
 - Edit the database configuration in [/api/.env](/api/.env) file.
+- Change directory to dotnet project. `cd ../Authentication`
+- Update values for "DefaultConnection" in appsettings.json file with your sqlsserver credentials
+- Update database with migrations. `dotnet ef database update`
+- Build the project. `dotnet build` 
 
 ## Run project
 
-- Run React project. `npm run dev`
+- Run React project in view folder. `npm run dev`
 - Run Laravel project `php artisan serve`
+- Run dotnet project `dotnet run`
 - Navigate to http://localhost:5173

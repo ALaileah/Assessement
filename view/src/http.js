@@ -1,9 +1,9 @@
 import axios from 'axios'
 
 let http = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: '/api',
   headers: {
-    'Content-type': 'application/json'
+    'Content-type': 'application/json',
   }
 })
 

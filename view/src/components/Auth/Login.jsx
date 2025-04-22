@@ -1,7 +1,7 @@
 // src/pages/Login.jsx
 import React, { useState } from 'react';
 import { Link,useHistory } from 'react-router-dom';
-import api from '../../api';
+import http from '../../http';
 
 function Login({ onSwitchToRegister }) {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -14,24 +14,24 @@ function Login({ onSwitchToRegister }) {
     e.preventDefault();
   
     try {
-      const response = await fetch('http://localhost:5036/api/Auth/login', {
-        method: 'POST',
+      const response = await http.post('/Auth/login', form, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(form),
       });
+
+      console.log('Response:', response);
   
-      const resultText = await response.text();
+      const resultText =  response.statusText;
   
-      if (!response.ok) {
-        console.error('Login error:', resultText);
+      if (!response.status === 200) {
+        console.error('Login error:', response);
         setMessage('Login failed: ' + resultText);
         return;
       }
   
       console.log('Login success:', resultText);
-      setMessage(resultText); // now this only sets if success
+      // setMessage(resultText); // now this only sets if success
       history.push('/product');
   
     } catch (error) {

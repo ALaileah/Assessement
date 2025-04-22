@@ -1,7 +1,8 @@
 // src/pages/Register.jsx
 import React, { useState } from 'react';
 import { Link,useHistory } from 'react-router-dom';
-import api from '../../api';
+import http from '../../http';
+
 
 function Register() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -9,8 +10,6 @@ function Register() {
   const history = useHistory();
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
- 
-
 
 
   const handleSubmit = async (event) => {
@@ -18,17 +17,19 @@ function Register() {
 
 
     try {
-      const response = await fetch('http://localhost:5036/api/Auth/register', {
+      // const response = await fetch('/api/Auth/register', {
         
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(form)
-      });
-      const responseText = await response.text();
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body: JSON.stringify(form)
+      // });
+      const response = await http.post('/Auth/register', form)
+      console.log('Response:', response);
+      const responseText = await response.statusText;
 
-      if (!response.ok) {
+      if (!response.status === 200) {
         console.error("Error details:", responseText);
         setMessage("Registration failed: " + responseText);
         return;
@@ -36,15 +37,16 @@ function Register() {
 
       
       // Step 2: Auto-login
-      const loginResponse = await fetch('http://localhost:5036/api/Auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+      const loginResponse = await http.post('/Auth/login', form, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
-      const loginText = await loginResponse.text();
 
-      if (!loginResponse.ok) {
+      const loginText = await loginResponse.statusText;
+
+      if (!loginResponse.status === 200) {
         console.error("Auto-login failed:", loginText);
         setMessage("Auto-login failed: " + loginText);
         return;
