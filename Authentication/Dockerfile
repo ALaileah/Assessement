@@ -5,26 +5,26 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
+
 
 
 # This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["Authentication/Authentication.csproj", "Authentication/"]
-RUN dotnet restore "./Authentication/Authentication.csproj"
-COPY . .
-WORKDIR "/src/Authentication"
-RUN dotnet build "./Authentication.csproj" -c $BUILD_CONFIGURATION -o /app/build
-
-# This stage is used to publish the service project to be copied to the final stage
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Authentication.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-FROM base AS final
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
-COPY --from=publish /app/publish .
+EXPOSE 8080
+# Copy everything
+COPY . ./
+# Restore as distinct layers
+RUN dotnet restore
+RUN dotnet build --configuration Release
+# Build and publish a release
+RUN dotnet publish -c Release -o out
+ 
+# Build runtime image
+FROM base
+WORKDIR /app
+COPY --from=build-env /app/out .
 ENTRYPOINT ["dotnet", "Authentication.dll"]
+
+
+ 
